@@ -229,12 +229,16 @@
          </div>
       </div>
       <div id="app-screen">
-         <header>
-            <div class="search-bar">
-               <i class="fa-solid fa-magnifying-glass"></i>
-               <input type="text" id="searchInput" placeholder="Buscar paciente..." oninput="resetPagingAndSearch()">
-            </div>
-         </header>
+<header style="display: flex; gap: 10px; align-items: center;">
+      <div class="search-bar" style="flex-grow: 1;">
+         <i class="fa-solid fa-magnifying-glass"></i>
+         <input type="text" id="searchInput" placeholder="Buscar paciente..." oninput="resetPagingAndSearch()">
+      </div>
+      <!-- Botón de Cerrar Sesión -->
+      <button onclick="cerrarSesion()" title="Cerrar sesión" style="background: #f1f3f4; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; cursor: pointer; color: var(--google-gray); font-size: 16px;">
+         <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+   </header>
          <div class="filter-banner">
             <div id="statusBadge" onclick="toggleFilter()">
                <i class="fa-solid fa-filter"></i> <span id="filterLabel">TODOS</span>: <span id="mainCounter">...</span>
