@@ -489,6 +489,16 @@ async function login() {
          }
          
          function cerrarDetalle() { document.getElementById('detalleModal').style.display = 'none'; }
+         function cerrarSesion() {
+    localStorage.removeItem('sesion_activa');
+    localStorage.removeItem('cedula_usuario');
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    // Limpiar campos de login por seguridad
+    document.getElementById('cedula').value = '';
+    document.getElementById('password').value = '';
+    resetLoginBtn(document.querySelector('.btn-primary'));
+}
       </script>
    </body>
 </html>
