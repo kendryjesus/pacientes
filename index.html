@@ -269,40 +269,47 @@
          const pageSize = 50;
          let onlyActivos = false;
          
-         async function login() {
-         const btn = document.querySelector('.btn-primary'); // Seleccionamos el botón
-         const userCedula = document.getElementById('cedula').value;
-         const userPass = document.getElementById('password').value;
-         const errorMsg = document.getElementById('error-msg');
-         
-         // 1. Estado de carga: Deshabilitar y dar feedback visual
-         btn.disabled = true;
-         btn.style.opacity = "0.7";
-         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
-         errorMsg.innerText = ""; // Limpiar errores previos
-         
-         try {
-         const { data, error } = await _supabase
-             .from('usuarios')
-             .select('*')
-             .eq('cedula', userCedula)
-             .eq('password', userPass)
-             .single();
-         
-         if (data) {
-             document.getElementById('login-screen').style.display = 'none';
-             document.getElementById('app-screen').style.display = 'block';
-             fetchData();
-         } else {
-             errorMsg.innerText = "Acceso denegado.";
-             // 2. Restaurar botón si falla el login
-             resetLoginBtn(btn);
-         }
-         } catch (err) {
-         errorMsg.innerText = "Error de conexión.";
-         resetLoginBtn(btn);
-         }
-         }
+async function login() {
+    const btn = document.querySelector('.btn-primary');
+    const userCedula = document.getElementById('cedula').value.trim();
+    const userPass = document.getElementById('password').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!userCedula || !userPass) {
+        errorMsg.innerText = "Por favor, completa todos los campos.";
+        return;
+    }
+
+    // 1. Estado de carga
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
+    errorMsg.innerText = "";
+
+    try {
+        // Llamamos a la función segura en la base de datos
+        const { data, error } = await _supabase.rpc('verificar_login', {
+            p_cedula: userCedula,
+            p_password: userPass
+        });
+
+        if (error) throw error;
+
+        // Si la función retorna true, el login es correcto
+        if (data === true) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+            fetchData();
+        } else {
+            errorMsg.innerText = "Cédula o contraseña incorrectas.";
+            resetLoginBtn(btn);
+        }
+    } catch (err) {
+        console.error(err);
+        errorMsg.innerText = "Error de conexión o credenciales inválidas.";
+        resetLoginBtn(btn);
+    }
+}
          
          // Función auxiliar para restablecer el botón
          function resetLoginBtn(btn) {
